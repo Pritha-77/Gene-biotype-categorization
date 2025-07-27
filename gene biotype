@@ -1,0 +1,47 @@
+# Load required packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install(c("biomaRt", "readxl", "writexl"))
+
+library(biomaRt)
+library(readxl)
+library(writexl)
+library(dplyr)
+
+
+# Set working directory (modify as needed)
+setwd("C:/ncRNA")  
+
+# Load gene list from an Excel file
+library(readxl)
+
+# Read the Excel file
+data <- read_excel("Book1.xlsx")
+
+# Print the first few rows
+head(data)
+
+colnames(gene_list)[1] <- "Gene"  # Ensure first column is "Gene"
+
+mart <- useEnsembl(biomart = "genes", dataset = "mmusculus_gene_ensembl")  # Mouse genes
+
+mart <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl")  # Human genes
+
+
+
+# Query Ensembl for gene biotypes
+annotated_genes <- getBM(
+  attributes = c("external_gene_name", "gene_biotype"),
+  filters = "external_gene_name",
+  values = gene_list$Gene,
+  mart = mart
+)
+
+# Merge with original gene list
+final_data <- merge(gene_list, annotated_genes, by.x = "Gene", by.y = "external_gene_name", all.x = TRUE)
+
+# Save annotated data to Excel
+write_xlsx(final_data, "annotated_Adipo-Sig.xlsx")
+
+print("Gene annotation complete. Saved as 'annotated_genes.xlsx'.")
