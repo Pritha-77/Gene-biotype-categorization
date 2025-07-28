@@ -17,10 +17,10 @@ setwd("C:/ncRNA")
 library(readxl)
 
 # Read the Excel file
-data <- read_excel("Book1.xlsx")
+gene_list <- read_excel("gene_list.xlsx")
 
 # Print the first few rows
-head(data)
+head(gene_list)
 
 colnames(gene_list)[1] <- "Gene"  # Ensure first column is "Gene"
 
@@ -42,6 +42,6 @@ annotated_genes <- getBM(
 final_data <- merge(gene_list, annotated_genes, by.x = "Gene", by.y = "external_gene_name", all.x = TRUE)
 
 # Save annotated data to Excel
-write_xlsx(final_data, "annotated_Adipo-Sig.xlsx")
+write_xlsx(final_data, "annotated_gene_list.xlsx")
 
-print("Gene annotation complete. Saved as 'annotated_genes.xlsx'.")
+print("Gene annotation complete. Saved as 'annotated_gene_list.xlsx'.")
